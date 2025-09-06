@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diabetes Predictor — Colorful 3D UI</title>
   <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#0d47a1">
     <link rel="icon" href="{{ url_for('static', filename='icon/diabetes-512.png') }}">
+  <title>Diabetes Predictor</title>
   <style>
     :root{
       --bg1: #0f0c29;
@@ -14,193 +14,98 @@
       --accent1: #ff6b6b;
       --accent2: #ffd86b;
       --accent3: #6be6ff;
-      --glass: rgba(255,255,255,0.06);
-      --glass-2: rgba(255,255,255,0.04);
-      --card-radius: 18px;
-      --card-padding: 28px;
       --shadow: 0 10px 30px rgba(2,6,23,0.6);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      font-family: Inter, sans-serif;
     }
 
-    /* Animated gradient background */
     body{
-      margin:0; min-height:100vh; display:grid; place-items:center; color:whitesmoke;
-      background: linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 50%, #1f1c2c 100%);
-      overflow:hidden;
+      margin:0; min-height:100vh; display:flex; flex-direction:column;
+      justify-content:center; align-items:center; color:white;
+      background: linear-gradient(135deg,var(--bg1), var(--bg2));
+      overflow-x:hidden;
+      padding:20px;
     }
-    /* floating blobs */
-    .bg-blob{
-      position: absolute; filter: blur(70px); opacity:0.75; mix-blend-mode:screen; transform: translate3d(0,0,0);
-      animation: float 10s ease-in-out infinite;
-    }
-    .blob-1{ width:520px; height:520px; background: radial-gradient(circle at 30% 30%, var(--accent1) 0%, transparent 40%); top:-120px; left:-100px; }
-    .blob-2{ width:420px; height:420px; background: radial-gradient(circle at 60% 40%, var(--accent3) 0%, transparent 40%); bottom:-100px; right:-80px; animation-duration:12s; }
-    @keyframes float{ 0%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(18px) rotate(6deg)} 100%{transform:translateY(0) rotate(0deg)} }
 
-    /* Layout */
-    .wrap{ width:100%; max-width:1100px; padding:40px; display:flex; gap:40px; align-items:center; justify-content:center; z-index:3; }
-
-    /* 3D card */
     .card{
-      width:520px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border-radius: var(--card-radius); padding: var(--card-padding); box-shadow: var(--shadow); backdrop-filter: blur(8px);
-      transform-style: preserve-3d; perspective:1200px; transition: transform .25s ease;
-      border: 1px solid rgba(255,255,255,0.04);
+      width:100%; max-width:420px;
+      background: rgba(255,255,255,0.05);
+      border-radius:18px; padding:22px;
+      box-shadow: var(--shadow); backdrop-filter: blur(10px);
     }
-    .card:hover{ transform: translateY(-8px) rotateX(6deg) rotateY(-4deg) scale(1.01); }
 
-    .brand{ display:flex; gap:12px; align-items:center; margin-bottom:6px; }
-    .logo{ width:56px; height:56px; border-radius:12px; display:grid; place-items:center; background: linear-gradient(135deg, var(--accent1), var(--accent2)); box-shadow: 0 8px 30px rgba(0,0,0,0.45); }
-    .logo svg{ width:36px; height:36px; }
-    h1{ margin:0; font-size:20px; letter-spacing:0.2px; }
-    p.lead{ margin:6px 0 18px 0; color: #dcd8e6; opacity:0.85; font-size:13px; }
+    h1{ font-size:1.4rem; margin:0 0 8px; text-align:center; }
+    p.lead{ font-size:0.9rem; margin-bottom:18px; text-align:center; opacity:0.85; }
 
     form{ display:grid; gap:14px; }
-    .row{ display:flex; gap:12px; }
-    .col{ flex:1; }
-
-    label{ display:block; font-size:12px; color:#e8e6f2; margin-bottom:6px; opacity:0.9; }
-    input[type=number], input[type=text]{ width:100%; padding:12px 14px; border-radius:10px; border:none; outline:none; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); font-size:14px; }
-    input[type=number]::placeholder{ color:rgba(255,255,255,0.5); }
-
-    /* Fancy 3D submit */
-    .btn-wrap{ margin-top:8px; display:flex; gap:12px; align-items:center; }
-    .btn{
-      --g1: linear-gradient(90deg,var(--accent1), var(--accent3));
-      display:inline-grid; place-items:center; padding:12px 18px; border-radius:12px; cursor:pointer; border:none; font-weight:700; letter-spacing:0.2px;
-      background: var(--g1); color:#08202a; box-shadow: 0 10px 30px rgba(107,97,255,0.12), 0 6px 10px rgba(0,0,0,0.35); transform: translateZ(30px);
-      transition: transform .12s ease, box-shadow .12s ease;
+    label{ font-size:0.85rem; margin-bottom:4px; display:block; }
+    input{
+      width:100%; padding:12px; border:none; border-radius:10px;
+      background: rgba(255,255,255,0.1); color:white; font-size:1rem;
     }
-    .btn:active{ transform: translateY(2px) translateZ(8px); box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
+    input::placeholder{ color:rgba(255,255,255,0.6); }
 
-    /* Result pill */
-    .result{ margin-left:auto; padding:10px 14px; background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:10px; font-weight:600; }
+    .btn{
+      background: linear-gradient(90deg,var(--accent1), var(--accent3));
+      border:none; padding:14px; border-radius:12px;
+      font-weight:600; font-size:1rem; cursor:pointer;
+      color:#111; width:100%; margin-top:10px;
+    }
+    .btn:active{ transform:scale(0.97); }
 
-    /* Side info panel */
-    .panel{ width:420px; padding:22px; border-radius:18px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); box-shadow: var(--shadow); border:1px solid rgba(255,255,255,0.03); }
-    .panel h3{ margin:0 0 8px 0; }
-    .stats{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:14px; }
-    .stat{ padding:12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); }
-    .stat small{ display:block; opacity:0.8; font-size:12px; }
-    .stat strong{ display:block; font-size:16px; margin-top:6px; }
+    .result{
+      margin-top:14px; text-align:center;
+      font-weight:600; font-size:1rem;
+      padding:10px; border-radius:10px;
+      background: rgba(255,255,255,0.1);
+    }
 
-    footer{ position: absolute; bottom:18px; width:100%; text-align:center; color: rgb(255, 255, 255); font-size:14px; }
-
-    @media (max-width:980px){ .wrap{ flex-direction:column-reverse; padding:24px; } .card, .panel{ width:100%; max-width:720px; } }
-
+    /* Responsive tweaks */
+    @media (max-width:480px){
+      h1{ font-size:1.2rem; }
+      .btn{ font-size:0.9rem; padding:12px; }
+      label{ font-size:0.8rem; }
+      input{ font-size:0.9rem; }
+    }
   </style>
 </head>
 <body>
-  <div class="bg-blob blob-1"></div>
-  <div class="bg-blob blob-2"></div>
+  <section class="card">
+    <h1>Diabetes Predictor</h1>
+    <p class="lead">Enter patient details to get prediction</p>
 
-  <main class="wrap" role="main">
-
-    <!-- Card: Form -->
-    <section class="card" aria-labelledby="formTitle">
-      <div class="brand">
-        <div class="logo" aria-hidden>
-          <!-- cute pancreas-like icon -->
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9 2 6.8 3.8 6 6.3C5.4 8 6 10 7.6 11.2C9.7 12.9 12 14 12 14C12 14 14.3 12.9 16.4 11.2C18 10 18.6 8 18 6.3C17.2 3.8 15 2 12 2Z" fill="white" opacity="0.95"/></svg>
-        </div>
-        <div>
-          <h1 id="formTitle">Diabetes Predictor</h1>
-          <p class="lead">Enter the patient's values below — the model will give a quick screener prediction.</p>
-        </div>
+    <form action="/predict" method="post">
+      <div>
+        <label for="Glucose">Glucose (mg/dL)</label>
+        <input id="Glucose" name="Glucose" type="number" step="any" placeholder="e.g. 120" required />
+      </div>
+      <div>
+        <label for="BloodPressure">Blood Pressure (mm Hg)</label>
+        <input id="BloodPressure" name="BloodPressure" type="number" step="any" placeholder="e.g. 70" required />
+      </div>
+      <div>
+        <label for="Insulin">Insulin (µU/mL)</label>
+        <input id="Insulin" name="Insulin" type="number" step="any" placeholder="e.g. 94" />
+      </div>
+      <div>
+        <label for="BMI">BMI (kg/m²)</label>
+        <input id="BMI" name="BMI" type="number" step="any" placeholder="e.g. 28.1" required />
+      </div>
+      <div>
+        <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function</label>
+        <input id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" type="number" step="any" placeholder="e.g. 0.167" />
+      </div>
+      <div>
+        <label for="Age">Age (years)</label>
+        <input id="Age" name="Age" type="number" step="1" placeholder="e.g. 33" required />
       </div>
 
-      <form action="/predict" method="post" novalidate>
-        <div class="row">
-          <div class="col">
-            <label for="Glucose">Glucose (mg/dL)</label>
-            <input id="Glucose" name="Glucose" type="number" step="any" placeholder="e.g. 120" required />
-          </div>
-          <div class="col">
-            <label for="BloodPressure">Blood Pressure (mm Hg)</label>
-            <input id="BloodPressure" name="BloodPressure" type="number" step="any" placeholder="e.g. 70" required />
-          </div>
-        </div>
+      <button class="btn" type="submit">Predict</button>
+    </form>
 
-        <div class="row">
-          <div class="col">
-            <label for="Insulin">Insulin (µU/mL)</label>
-            <input id="Insulin" name="Insulin" type="number" step="any" placeholder="e.g. 94" />
-          </div>
-          <div class="col">
-            <label for="BMI">BMI (kg/m²)</label>
-            <input id="BMI" name="BMI" type="number" step="any" placeholder="e.g. 28.1" required />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function</label>
-            <input id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" type="number" step="any" placeholder="e.g. 0.167" />
-          </div>
-          <div class="col">
-            <label for="Age">Age (years)</label>
-            <input id="Age" name="Age" type="number" step="1" placeholder="e.g. 33" required />
-          </div>
-        </div>
-
-        
-        <div class="btn-wrap">
-          <button type="submit" class="btn">Predict</button>
-          <div  ></div>
-          <h1 style=" color: #000;" class="result" id="resultPill">
-          {{ message if message else "Ready" }}
-          </h1>
-        </div>
-
-      </form>
-
-    </section>
-
-    <!-- Panel: Info -->
-    <aside class="panel" aria-labelledby="infoTitle">
-      <h3 id="infoTitle">Quick Interpretations</h3>
-      <p style="margin:6px 0 0 0; font-size:13px; opacity:0.9;">High Glucose or very high Insulin usually indicates risk. BMI & age are strong risk factors.</p>
-
-      <div class="stats">
-        <div class="stat">
-          <small>Normal Glucose</small>
-          <strong>70 - 140 mg/dL</strong>
-        </div>
-        <div class="stat">
-          <small>Normal Insulin (fasting)</small>
-          <strong>2 - 25 µU/mL</strong>
-        </div>
-        <div class="stat">
-          <small>Normal BMI</small>
-          <strong>18.5 - 24.9</strong>
-        </div>
-        <div class="stat">
-          <small>Risk Tip</small>
-          <strong>High BMI + High Glucose</strong>
-        </div>
-      </div>
-
-    </aside>
-
-  </main>
-
-  <footer>Made with ❤️ By -Krish Gupta</footer>
-
-  <script>
-    // small client-side UX: show that form was submitted and disable button briefly
-    const form = document.querySelector('form');
-    const btn = document.querySelector('.btn');
-    const pill = document.getElementById('resultPill');
-
-    form.addEventListener('submit', ()=>{
-      btn.disabled = true;
-      btn.style.opacity = 0.9;
-      pill.textContent = 'Predicting...';
-    });
-
-    // If server returns a message in template it will replace the pill text
-    // (Flask: pass `message` variable to template and use below to show it.)
-  </script>
+    {% if message %}
+    <div class="result">{{ message }}</div>
+    {% endif %}
+  </section>
   <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("/static/service-worker.js")
