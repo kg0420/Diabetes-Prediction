@@ -8,7 +8,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#4caf50",
+  "theme_color": "#3f0760",
   "icons": [
     {
       "src": "/static/icon/icons8-diabetes-192.png",
@@ -23,3 +23,4 @@
     }
   ]
 }
+
